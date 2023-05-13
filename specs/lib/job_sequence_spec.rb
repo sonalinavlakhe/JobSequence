@@ -31,4 +31,22 @@ RSpec.describe JobSequence do
       end
     end
   end
+
+  describe '#circular_dependency?' do
+    let(:job_sequence) { JobSequence.new(jobs) }
+
+    context 'with circular dependency' do
+      let(:jobs) {{'a' => 'b', 'b' => 'c', 'c' => 'a'}}
+      it 'returns true' do
+        expect(job_sequence.send(:circular_dependency?, 'a', 'b')).to be true
+      end
+    end
+
+    context 'with no circular dependency' do
+      let(:jobs) {{'a' => nil, 'b' => 'a', 'c' => 'b'}}
+      it 'returns false' do
+        expect(job_sequence.send(:circular_dependency?, 'a', nil)).to be false
+      end
+    end
+  end
 end

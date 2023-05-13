@@ -12,4 +12,10 @@ class JobSequence
       puts "Error: #{e.message}"
     end
   end
+
+  private
+
+
+  def circular_dependency?(job, dependency)
+  end
 end
