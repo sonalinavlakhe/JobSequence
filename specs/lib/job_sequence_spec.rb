@@ -49,4 +49,54 @@ RSpec.describe JobSequence do
       end
     end
   end
+
+  describe '#sequence_jobs' do
+    context 'when given an empty hash' do
+      let(:jobs) { {} }
+
+      it 'returns an empty string' do
+        expect(JobSequence.new(jobs).sequence_jobs).to eq ''
+      end
+    end
+
+    context 'when given a single job' do
+      let(:jobs) {{'a' => nil}}
+
+      it 'returns the job name' do
+        expect(JobSequence.new(jobs).sequence_jobs).to eq 'a'
+      end
+    end
+
+    context 'when given multiple jobs with no dependencies' do
+      let(:jobs) {{'a' => nil, 'b' => nil, 'c' => nil}}
+      
+      it 'returns the jobs in any order' do
+        expect(JobSequence.new(jobs).sequence_jobs).to match(/abc/)
+      end
+    end
+
+    context 'when given multiple jobs with dependencies' do
+      let(:jobs) {{'a'=> nil, 'b'=> 'c', 'c'=> 'f', 'd'=> 'a', 'e'=> 'b', 'f'=> nil}}
+
+      it 'returns the jobs in the correct order' do
+        expect(JobSequence.new(jobs).sequence_jobs).to eq 'afcdbe'
+      end
+    end
+
+    context 'when given jobs with circular dependencies' do
+      let(:jobs) {{'a'=> nil, 'b'=> 'c', 'c'=> 'f', 'd'=> 'a', 'e'=> nil, 'f'=> 'b'}}
+
+      it 'raises an ArgumentError' do
+        expect { JobSequence.new(jobs).sequence_jobs }.to raise_error(ArgumentError, 'Jobs cannot have circular dependencies')
+      end
+    end
+
+    context 'when given jobs that depend on themselves' do
+      let(:jobs) {{'a'=> nil, 'b'=> nil, 'c'=> 'c'}}
+
+      it 'raises an ArgumentError' do
+        expect { JobSequence.new(jobs).sequence_jobs }.to raise_error(ArgumentError, 'Jobs cannot depend on themselves')
+      end
+    end
+  end
 end
