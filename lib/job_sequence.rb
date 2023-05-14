@@ -7,6 +7,7 @@ class JobSequence
      begin
       @jobs.each do |job, dependency|
         raise ArgumentError, 'Jobs cannot depend on themselves' if job == dependency
+        raise ArgumentError, 'Jobs cannot have circular dependencies' if circular_dependency?(job, dependency)
       end
     rescue ArgumentError => e
       puts "Error: #{e.message}"
@@ -20,7 +21,7 @@ class JobSequence
     return false if dependency.nil?
     visited_jobs = []
     
-    while @jobs[dependency]       
+    while @jobs[dependency]
       visited_jobs << dependency
       dependency = @jobs[dependency]
       return true if visited_jobs.include?(dependency)
