@@ -17,5 +17,15 @@ class JobSequence
 
 
   def circular_dependency?(job, dependency)
+    return false if dependency.nil?
+    visited_jobs = []
+    
+    while @jobs[dependency]       
+      visited_jobs << dependency
+      dependency = @jobs[dependency]
+      return true if visited_jobs.include?(dependency)
+    end
+
+    false
   end
 end
