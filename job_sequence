@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+require_relative 'lib/job_sequence'
+
+p JobSequence.new({}).sequence_jobs
+p JobSequence.new({'a'=> nil, 'b'=> 'c', 'c'=> nil}).sequence_jobs
+p JobSequence.new({'a'=> nil, 'b'=> 'c', 'c'=> 'f', 'd'=> 'a', 'e'=> 'b', 'f'=> nil}).sequence_jobs
+p JobSequence.new({'a'=> nil, 'b'=> 'c', 'c'=> 'f', 'd'=> 'a', 'e'=> nil, 'f'=> 'b'}).sequence_jobs
+p JobSequence.new({'a'=> nil, 'b'=> nil, 'c'=> 'c'}).sequence_jobs
+
+
